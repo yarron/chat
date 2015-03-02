@@ -1,0 +1,119 @@
+<% layout('layout/page') -%>
+<% block('title', "Чат") -%>
+
+<script src="/socket.io/socket.io.js"></script>
+<div id="room" >
+    <form>
+        <a href="#" onclick="showMessage();">Показать 10 сообщений</a>
+        <div id="messages"></div>
+
+        <div class="row">
+                <div class="col-xs-3" id="connect" rel="tooltip" title=""></div>
+                <div class="col-xs-7 col-sm-7"><input disabled class="form-control" autocomplete="off" autofocus placeholder="Сообщение..."></div>
+                <div class="col-xs-2 col-sm-2"><button type="submit" class="btn btn-primary">Отправить</button></div>
+        </div>
+    </form>
+</div>
+
+
+
+<script>
+
+    //берем переменные из формы
+    var input = $('#room input');
+    var form = $('#room form');
+
+    //запускаем соединение на текущий сервер
+    var socket = io.connect('', {
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000
+    });
+
+    socket
+            .on('message', function(message, mode) { //событие, если пришло сообщение
+                printMessage(message, mode);
+            })
+            .on('leave', function(username) { //событие, если кто-то ушел
+                //printStatus(username + " вышел из чата");
+            })
+            .on('join', function(username) { //событие, если кто-то пришел
+                printStatus(username + " вошёл в чат");
+            })
+            .on('connect', function() { //событие, если установилось соединение
+                printConnect("<span class='glyphicon glyphicon-ok alert alert-success' title='Соединение установлено'></span>");
+                form.on('submit', sendMessage);
+                input.prop('disabled', false);
+            })
+            .on('disconnect', function() { //событие, если соединение потеряно
+                printStatus("<span class='glyphicon glyphicon-ban-circle alert alert-danger' title='Cоединение потеряно'></span>");
+                form.off('submit', sendMessage);
+                input.prop('disabled', true);
+
+                //this.$emit('error');
+            })
+            .on('logout', function() { //события выхода из аккаунта
+                location.href = "/";
+            })
+            .on('error', function(reason) {
+                if (reason == "handshake unauthorized") {
+                    printStatus("вы вышли из сайта");
+                } else {
+                    setTimeout(function() {
+                        socket.socket.connect();
+                    }, 500);
+                }
+            })
+            .on('reconnect_failed', function() { //событие, если соединение потеряно окончательно
+                alert("Соединение умерло окончательно");
+            });
+
+    //функция отправки сообщения в чат и имитация события
+    function sendMessage() {
+        var text = input.val();
+        socket.emit('message', text, function() {
+            input.val('');
+        });
+        return false;
+    }
+
+    //функция показа истоиии соощений
+    function showMessage() {
+        socket.emit('showMessage', function(err, messages, id) {
+            printMessage("История...");
+            messages.forEach(function(message){
+                if(message.user_id == id)
+                    printMessage("я> " + message.text);
+                else
+                    printMessage(message.username + ">>> " + message.text);
+            });
+        });
+        return false;
+    }
+
+    //функция отображения статуса соединения
+    function printConnect(status) {
+        $('#connect').html(status);
+    }
+
+    function printStatus(status) {
+        $('#connect>span').attr('title',status).tooltip({placement : 'bottom',trigger:'manual'}).tooltip('show');
+        setTimeout(function() {
+            $('#connect>span').attr('title','').tooltip('hide');
+        }, 1500);
+    }
+
+    //функция отображения сообщения
+    function printMessage(message, mode) {
+        var html = '<div class="row">';
+        if(!mode)
+            html +='<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="text-align:right"><p class="text-muted">'+message.username+'</p></div>';
+        else
+            html +='<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" style="text-align:right"><p class="text-primary">'+message.username+'</p></div>';
+            html +='<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7"><pre>'+message.text+'</pre></div>';
+            html +='<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">'+message.date+'</div>';
+            html +='</div>';
+        $('#messages').append(html);
+    }
+
+</script>

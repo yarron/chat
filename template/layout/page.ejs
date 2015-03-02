@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%=blocks.title%></title>
+
+  <link rel="stylesheet" href="/vendor/bower_components/bootstrap/dist/css/bootstrap.css"/>
+  <link rel="stylesheet" href="/css/app.css"/>
+
+  <script src="/vendor/bower_components/jquery/dist/jquery.js"></script>
+  <script src="/vendor/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+</head>
+<body>
+<header>
+  <%-blocks.header%>
+</header>
+<section style="min-width:400px">
+  <div class="container">
+      <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+              <%-partial('../partials/topNavigation')%>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+              <h1><%=blocks.title%></h1>
+              <%-body -%>
+          </div>
+      </div>
+  </div>
+
+</section>
+<footer>
+  <%-blocks.footer%>
+</footer>
+</body>
+</html>

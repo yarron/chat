@@ -1,0 +1,15 @@
+//модули для работы приложения
+var app = require('../app'); //подключаем файл нашего приложения
+var config = require('config'); //подключаем конфиг
+var log = require('lib/log')(module); //подключаем логирование
+
+//ставим порт из конфига
+app.set('port', process.env.PORT || config.get('port'));
+
+//запускаем сервер и слушаем порт
+var server = app.listen(config.get('port'), function() {
+    log.info('Express server listening on port ' + server.address().port);
+});
+
+var io = require('../socket')(server); //подключаем сокет
+app.set('io', io); //и делаем его доступным для пользования на уровне приложения
