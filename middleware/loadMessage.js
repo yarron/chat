@@ -11,7 +11,7 @@ module.exports = function(req, res, next) {
     //ищем юзера из сессии
     Message.find({}, function(err, messages) {
         if (err) return next(err);
-        console.log(messages);
+        //console.log(messages);
         //req.message = res.locals.user = user; //даем знать о юзере всем шаблонам
         next();
     });

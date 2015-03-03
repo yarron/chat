@@ -34,6 +34,7 @@ schema.methods.checkPassword = function(password) {
 
 //функция авторизации пользователя (статичная)
 schema.statics.authorize = function(username, password, callback) {
+
   var User = this;
     //цепочка вызовов функций
   async.waterfall([

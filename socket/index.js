@@ -39,7 +39,7 @@ function loadUser(session, callback) {
 module.exports = function(server) {
     //инициализируем сокет и слушаем сервер
     var io = require('socket.io')({
-      origins: 'localhost:*', //домен и порт
+      origins: 'chater:*', //домен и порт
       logger: log //логирование
     }).listen(server);
 
@@ -95,7 +95,6 @@ module.exports = function(server) {
 
     //если соединение на сокете установлено
     io.sockets.on('connection', function(socket) {
-
         var username = socket.request.user.username; //запоминаем логин
         var id = socket.request.user._id; //запоминаем id
 
@@ -103,11 +102,10 @@ module.exports = function(server) {
 
         socket.on('message', function(text, cb) { //если кто-то отправил сообщение
             //сохраняем его в базе
-            console.log(id);
             async.waterfall([
                 function(id, callback) {
 
-                   /* var message = new Message({user_id: id, text: "+++"});
+                    /*var message = new Message({user_id: id, text: "+++"});
                     message.save(function(err) {
                         console.log(err);
                         if (err) return callback(err);
@@ -119,8 +117,6 @@ module.exports = function(server) {
                 if (err instanceof HttpError) return callback(null, false);
                 callback(err);
             });
-
-            //console.log(id);
             socket.broadcast.emit('message', username, text); //отображаем его остальным
             cb && cb();
         });

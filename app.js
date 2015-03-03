@@ -50,6 +50,7 @@ app.use(require('middleware/sendHttpError')); //наш собственный о
 app.use(require('middleware/loadUser')); //наш обработчик загрузки пользователя
 app.use(require('middleware/loadMessage')); //наш обработчик загрузки сохраненных сообщений
 
+
 //подключение маршрутов
 require('routes')(app);
 
@@ -61,7 +62,6 @@ app.use(function(err, req, res, next) {
     if (typeof err == 'number') { // next(404);
         err = new HttpError(err);
     }
-    console.log(err);
     if (err instanceof HttpError) {
         res.sendHttpError(err);
     } else {

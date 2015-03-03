@@ -24,7 +24,7 @@
     var form = $('#room form');
 
     //запускаем соединение на текущий сервер
-    var socket = io.connect('', {
+    var socket = io.connect('' , {
         reconnection: true,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000

@@ -4,6 +4,7 @@ var HttpError = require('error').HttpError;
 var AuthError = require('models/user').AuthError;
 var async = require('async');
 
+
 //если по роуту мы попали сюда запросом GET, выводим шаблон
 exports.get = function(req, res) {
   res.render('login');
